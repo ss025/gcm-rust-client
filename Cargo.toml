@@ -1,0 +1,16 @@
+[package]
+name = "gcm"
+version = "1.0.0"
+authors = ["ss025"]
+description = "An API to talk to GCM/FCM (Google/Firebase Cloud Messaging) in Rust"
+
+[dependencies]
+hyper = "^0.10"
+hyper-native-tls = "^0.2"
+serde = "1.0.7"
+serde_derive = "1.0.7"
+serde_json = "1.0.2"
+reqwest = "0.9.12"
+futures = "0.1.25"
+tokio = "0.1.18"
+http = "0.1"
