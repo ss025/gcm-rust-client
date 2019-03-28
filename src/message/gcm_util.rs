@@ -2,13 +2,13 @@ use http::StatusCode as HttpStatusCode;
 use hyper::status::StatusClass;
 use hyper::status::StatusCode;
 
-use message::Message;
 use message::response::GcmError;
+use message::Message;
 
 pub fn to_json(msg: &Message) -> Result<String, GcmError> {
     match serde_json::to_string(msg) {
         Ok(parsed_json) => Ok(parsed_json),
-        Err(_) => Err(GcmError::InvalidJsonBody)
+        Err(_) => Err(GcmError::InvalidJsonBody),
     }
 }
 
@@ -16,7 +16,7 @@ pub fn to_json(msg: &Message) -> Result<String, GcmError> {
 pub fn parse_error_status_code(http_status_option: Option<HttpStatusCode>) -> GcmError {
     match http_status_option {
         None => GcmError::ServerError,
-        Some(http_status) => parse_error_status(http_status)
+        Some(http_status) => parse_error_status(http_status),
     }
 }
 
@@ -31,8 +31,6 @@ fn parse_error_status(http_status: HttpStatusCode) -> GcmError {
     match hyper_status_code {
         StatusCode::Unauthorized => GcmError::Unauthorized,
         StatusCode::BadRequest => GcmError::InvalidMessage(http_status.to_string()),
-        _ => GcmError::InvalidMessage("Unknown Error".to_string())
+        _ => GcmError::InvalidMessage("Unknown Error".to_string()),
     }
 }
-
-

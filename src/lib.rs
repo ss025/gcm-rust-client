@@ -8,10 +8,9 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-pub use message::*;
 pub use message::response::GcmError as Error;
+pub use message::*;
 pub use notification::*;
 
 mod message;
 mod notification;
-
