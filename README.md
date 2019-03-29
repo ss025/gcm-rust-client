@@ -13,6 +13,7 @@ gcm-rust-client
   - [ ] Add client config object (e.g. keep alive,pool,read timeout)
   - [ ] Parse failed resgisteration ids in response
   - [ ] Exhaustive response code handling 
+  - [x] Prepare and return Error Name to Vector of registration ids map based on flag 
 
 
 ## Usage
