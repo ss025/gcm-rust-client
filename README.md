@@ -103,11 +103,42 @@ fn send_to_gcm() -> GcmResponseFuture {
     let api_key = "<api-key>".to_string();
     let registration_ids = vec!["registration-id-1", "registration-id-1"];
     let msg = Message::new(registration_ids).data(data).build();
-
-    let sender = AsyncFsmSender::new(api_key, fcm_url);
+    let build_ids_by_error_map = true ;
+    let sender = AsyncFsmSender::new(api_key, fcm_url,build_ids_by_error_map);
     sender.send(msg)
 }
 
 ```
 
 
+### Sample Response 
+
+```json
+{
+  "message_id": null,
+  "error": null,
+  "multicast_id": 5552427494506560000,
+  "success": 1,
+  "failure": 1,
+  "canonical_ids": 0,
+  "results": [
+    {
+      "message_id": "0:1553856661919282%313d616af9fd7ecd",
+      "registration_id": null,
+      "error": null
+    },
+    {
+      "message_id": null,
+      "registration_id": null,
+      "error": "InvalidRegistration"
+    }
+  ],
+  "ids_by_error": {
+    "InvalidRegistration": [
+      "abc"
+    ]
+  }
+}
+
+
+```
