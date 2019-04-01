@@ -13,18 +13,18 @@ use gcm_util;
 use message::response::{GcmError, GcmResponse};
 use message::Message;
 
-type FcmResult = Result<GcmResponse, GcmError>;
+type GcmResult = Result<GcmResponse, GcmError>;
 
 #[allow(dead_code)]
-pub struct FcmSender {
+pub struct GcmSender {
     google_api: String,
     api_key: String,
     client: Client,
     headers: Headers,
 }
 
-impl FcmSender {
-    pub fn new(google_api: String, api_key: String) -> FcmSender {
+impl GcmSender {
+    pub fn new(google_api: String, api_key: String) -> GcmSender {
         let ssl = NativeTlsClient::new().unwrap();
         let connector = HttpsConnector::new(ssl);
         let client = Client::with_connector(connector);
@@ -39,7 +39,7 @@ impl FcmSender {
         headers.set(header::Authorization("key=".to_string() + &api_key));
         headers.set(header::ContentType(mime));
 
-        FcmSender {
+        GcmSender {
             google_api,
             api_key,
             client,
@@ -48,13 +48,13 @@ impl FcmSender {
     }
 
     // Todo : Have to add retry logic here
-    pub fn send(&self, msg: Message) -> FcmResult {
+    pub fn send(&self, msg: Message) -> GcmResult {
         let parsed_msg = gcm_util::to_json(&msg)?;
         let mut result = self.post(&parsed_msg)?;
         self.parse_response(&mut result)
     }
 
-    fn parse_response(&self, response: &mut Response) -> FcmResult {
+    fn parse_response(&self, response: &mut Response) -> GcmResult {
         let mut body = String::new();
         let resp_code = response.status;
 
@@ -79,7 +79,7 @@ impl FcmSender {
         }
     }
 
-    fn parse_gcm_result(&self, status: StatusCode, body: &str) -> FcmResult {
+    fn parse_gcm_result(&self, status: StatusCode, body: &str) -> GcmResult {
         //200 Ok: Request was successful!
         if status == StatusCode::Ok {
             return serde_json::from_str(body).or_else(|_| Err(GcmError::InvalidJsonBody));

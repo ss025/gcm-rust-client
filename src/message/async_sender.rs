@@ -13,23 +13,23 @@ use message::response::{GcmError, GcmResponse};
 
 pub type GcmResponseFuture = Box<Future<Item=GcmResponse, Error=GcmError> + Send>;
 
-pub struct AsyncFsmSender {
+pub struct AsyncGsmSender {
     client: Client,
-    fcm_url: String,
+    gcm_url: String,
     ids_by_error: bool,
 }
 
-impl AsyncFsmSender {
+impl AsyncGsmSender {
 
     /// Create new Async FCM/GCM Sender
     ///
     /// api_key  => api key given gcm or fcm
     ///
-    /// fcm_url  => gcm/fcm api e.g https://fcm.googleapis.com/fcm/send
+    /// gcm_url  => gcm/fcm api e.g https://fcm.googleapis.com/fcm/send
     ///
     /// ids_by_error => flag to build map of <error,vec<registration_ids>> in GCM Response . If this flag is false , no
     /// map will be prepared.
-    pub fn new(api_key: String, fcm_url: String,ids_by_error :bool) -> AsyncFsmSender {
+    pub fn new(api_key: String, gcm_url: String,ids_by_error :bool) -> AsyncGsmSender {
         // set up headers
         let mut headers = HeaderMap::new();
         headers.insert(
@@ -42,7 +42,7 @@ impl AsyncFsmSender {
             .default_headers(headers)
             .build()
             .expect("new async client");
-        AsyncFsmSender { client, fcm_url ,ids_by_error}
+        AsyncGsmSender { client, gcm_url: gcm_url,ids_by_error}
     }
 
     pub fn send(&self, msg: Message) -> GcmResponseFuture {
@@ -55,11 +55,11 @@ impl AsyncFsmSender {
             Ok(body) => {
                 let and_then = self
                     .client
-                    .post(&self.fcm_url)
+                    .post(&self.gcm_url)
                     .body(body)
                     .send()
                     .map_err(|err| gcm_util::parse_error_status_code(err.status()))
-                    .and_then(move |res| AsyncFsmSender::parse(res, reg_ids.unwrap(),should_build_error_map));
+                    .and_then(move |res| AsyncGsmSender::parse(res, reg_ids.unwrap(), should_build_error_map));
                 Box::new(and_then)
             }
         }

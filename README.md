@@ -38,7 +38,7 @@ extern crate gcm;
 use std::collections::HashMap;
 
 use gcm::Message;
-use gcm::sender::FcmSender;
+use gcm::sender::GcmSender;
 
 fn main() {
     let mut data = HashMap::new();
@@ -48,10 +48,10 @@ fn main() {
     let api_key = "<api-key>".to_string();
     let registration_ids = vec!["registration-id-1", "registration-id-1"];
 
-    let fcm_sender = FcmSender::new(google_api, api_key);
+    let gcm_sender = GcmSender::new(google_api, api_key);
 
     let msg = Message::new(registration_ids).data(data).build();
-    let result = fcm_sender.send(msg);
+    let result = gcm_sender.send(msg);
 
     match result {
         Ok(resp) => println!("response {:?}", serde_json::to_string(&resp)),
@@ -73,7 +73,7 @@ use std::collections::HashMap;
 use futures::Future;
 use futures::future::ok;
 
-use gcm::async_sender::{AsyncFsmSender, GcmResponseFuture};
+use gcm::async_sender::{AsyncGsmSender, GcmResponseFuture};
 use gcm::Message;
 
 fn main() {
@@ -104,7 +104,7 @@ fn send_to_gcm() -> GcmResponseFuture {
     let registration_ids = vec!["registration-id-1", "registration-id-1"];
     let msg = Message::new(registration_ids).data(data).build();
     let build_ids_by_error_map = true ;
-    let sender = AsyncFsmSender::new(api_key, fcm_url,build_ids_by_error_map);
+    let sender = AsyncGsmSender::new(api_key, fcm_url,build_ids_by_error_map);
     sender.send(msg)
 }
 
