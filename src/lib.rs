@@ -10,7 +10,7 @@ extern crate serde_json;
 
 pub use message::response::GcmError as Error;
 pub use message::*;
-pub use notification::*;
+/*pub use notification::*;*/
 
 mod message;
-mod notification;
+/*mod notification;*/

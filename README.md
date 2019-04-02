@@ -43,15 +43,15 @@ use gcm::sender::GcmSender;
 
 fn main() {
     let mut data = HashMap::new();
-    data.insert("message", "Howdy!");
+    data.insert("message".to_string(), "Howdy!".to_string());
 
     let google_api = "https://fcm.googleapis.com/fcm/send".to_string();
     let api_key = "<api-key>".to_string();
-    let registration_ids = vec!["registration-id-1", "registration-id-1"];
+    let registration_ids = vec!["registration-id-1".to_string(), "registration-id-1".to_string()];
 
     let gcm_sender = GcmSender::new(google_api, api_key);
 
-    let msg = Message::new(registration_ids).data(data).build();
+    let msg = Message::new(registration_ids).data(&data).build();
     let result = gcm_sender.send(msg);
 
     match result {
@@ -98,12 +98,12 @@ fn process() -> impl Future<Item=(), Error=()> {
 
 fn send_to_gcm() -> GcmResponseFuture {
     let mut data = HashMap::new();
-    data.insert("message", "Howdy!");
+    data.insert(String::from("key"), "Howdy!".to_string());
 
     let fcm_url = "https://fcm.googleapis.com/fcm/send".to_string();
     let api_key = "<api-key>".to_string();
-    let registration_ids = vec!["registration-id-1", "registration-id-1"];
-    let msg = Message::new(registration_ids).data(data).build();
+    let registration_ids = vec!["registration-id-1".to_string(), "registration-id-1".to_string()];
+    let msg = Message::new(registration_ids).data(&data).build();
     let build_ids_by_error_map = true ;
     let sender = AsyncGsmSender::new(api_key, fcm_url,build_ids_by_error_map);
     sender.send(msg)
