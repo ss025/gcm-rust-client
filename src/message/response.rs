@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use std::error;
 use std::fmt::{self, Display};
-use std::collections::HashMap;
 
 #[derive(Deserialize, Debug, Serialize)]
 pub struct GcmResponse {
@@ -11,7 +11,7 @@ pub struct GcmResponse {
     pub failure: Option<u64>,
     pub canonical_ids: Option<u64>,
     pub results: Option<Vec<MessageResult>>,
-    pub ids_by_error: Option<HashMap<String,Vec<String>>>,
+    pub ids_by_error: Option<HashMap<String, Vec<String>>>,
 }
 
 impl GcmResponse {
@@ -24,29 +24,28 @@ impl GcmResponse {
             failure: None,
             canonical_ids: None,
             results: None,
-            ids_by_error:None,
+            ids_by_error: None,
         }
     }
 
-    pub fn build_reg_ids_by_error_map(&mut self, ids :Vec<String>){
-        if self.failure.is_none() || self.results.is_none(){
-            return
+    pub fn build_reg_ids_by_error_map(&mut self, ids: Vec<String>) {
+        if self.failure.is_none() || self.results.is_none() {
+            return;
         }
 
         let message_results = self.results.as_ref().unwrap();
-        let mut ids_by_error : HashMap<String,Vec<String>> = HashMap::new();
+        let mut ids_by_error: HashMap<String, Vec<String>> = HashMap::new();
 
-        for(i,v) in message_results.iter().enumerate(){
+        for (i, v) in message_results.iter().enumerate() {
             match v.error {
-                None => {},
+                None => {}
                 Some(ref err_name) => {
                     let id = ids.get(i).unwrap();
                     ids_by_error
                         .entry(err_name.to_string())
                         .and_modify(|v| v.push(id.to_string()))
-                        .or_insert(vec![id.to_string()]);
-
-                },
+                        .or_insert_with(|| vec![id.to_string()]);
+                }
             }
         }
 

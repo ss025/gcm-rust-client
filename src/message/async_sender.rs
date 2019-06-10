@@ -8,10 +8,10 @@ use http::HeaderMap;
 use reqwest::async::{Client, ClientBuilder, Response};
 
 use gcm_util;
-use message::Message;
 use message::response::{GcmError, GcmResponse};
+use message::Message;
 
-pub type GcmResponseFuture = Box<Future<Item=GcmResponse, Error=GcmError> + Send>;
+pub type GcmResponseFuture = Box<Future<Item = GcmResponse, Error = GcmError> + Send>;
 
 pub struct AsyncGsmSender {
     client: Client,
@@ -20,7 +20,6 @@ pub struct AsyncGsmSender {
 }
 
 impl AsyncGsmSender {
-
     /// Create new Async FCM/GCM Sender
     ///
     /// api_key  => api key given gcm or fcm
@@ -29,7 +28,7 @@ impl AsyncGsmSender {
     ///
     /// ids_by_error => flag to build map of <error,vec<registration_ids>> in GCM Response . If this flag is false , no
     /// map will be prepared.
-    pub fn new(api_key: String, gcm_url: String,ids_by_error :bool) -> AsyncGsmSender {
+    pub fn new(api_key: String, gcm_url: String, ids_by_error: bool) -> AsyncGsmSender {
         // set up headers
         let mut headers = HeaderMap::new();
         headers.insert(
@@ -42,7 +41,11 @@ impl AsyncGsmSender {
             .default_headers(headers)
             .build()
             .expect("new async client");
-        AsyncGsmSender { client, gcm_url: gcm_url,ids_by_error}
+        AsyncGsmSender {
+            client,
+            gcm_url,
+            ids_by_error,
+        }
     }
 
     pub fn send(&self, msg: Message) -> GcmResponseFuture {
@@ -59,13 +62,19 @@ impl AsyncGsmSender {
                     .body(body)
                     .send()
                     .map_err(|err| gcm_util::parse_error_status_code(err.status()))
-                    .and_then(move |res| AsyncGsmSender::parse(res, reg_ids.unwrap(), should_build_error_map));
+                    .and_then(move |res| {
+                        AsyncGsmSender::parse(res, reg_ids.unwrap(), should_build_error_map)
+                    });
                 Box::new(and_then)
             }
         }
     }
 
-    fn parse(mut res: Response, ids: Vec<String>,should_build_error_map : bool) -> GcmResponseFuture {
+    fn parse(
+        mut res: Response,
+        ids: Vec<String>,
+        should_build_error_map: bool,
+    ) -> GcmResponseFuture {
         let status_code = res.status().as_u16();
 
         match status_code {
@@ -85,6 +94,4 @@ impl AsyncGsmSender {
             _ => Box::new(err(gcm_util::parse_error_status_code(Some(res.status())))),
         }
     }
-
-
 }

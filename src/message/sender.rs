@@ -65,7 +65,7 @@ impl GcmSender {
         }
     }
 
-    fn post(&self, json_request: &String) -> Result<Response, GcmError> {
+    fn post(&self, json_request: &str) -> Result<Response, GcmError> {
         let response = self
             .client
             .post(&self.google_api)

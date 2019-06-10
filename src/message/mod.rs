@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-use std::str;
-
 use serde::Serializer;
+use serde_json::map::Map as JsonMap;
+use serde_json::value::Value as JsonValue;
 
 pub use message::response::*;
 /*use notification::Notification;*/
@@ -47,10 +46,13 @@ pub struct Message {
     #[serde(skip_serializing_if = "Option::is_none")]
     dry_run: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    data: Option<HashMap<String, String>>,
+    data: Option<JsonMap<String, JsonValue>>,
 }
 
-fn priority_lowercase<S>(priority_field: &Option<Priority>, serializer: S, ) -> Result<S::Ok, S::Error>
+fn priority_lowercase<S>(
+    priority_field: &Option<Priority>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
@@ -81,7 +83,7 @@ impl Message {
     }
 
     /// Set various registration ids to which the message ought to be sent.
-/*    pub fn registration_ids(mut self, ids: Vec<&'a str>) -> Message<'a> {
+    /*    pub fn registration_ids(mut self, ids: Vec<&'a str>) -> Message<'a> {
         self.registration_ids = Some(ids.iter().map(|s| s.to_string()).collect());
         self
     }*/
@@ -100,13 +102,13 @@ impl Message {
     /// let message = Message::new(vec!["<registration id>".to_string()])
     ///     .priority(Priority::High);
     /// ```
-    pub fn priority(mut self, priority: Priority) -> Self{
+    pub fn priority(mut self, priority: Priority) -> Self {
         self.priority = Some(priority);
         self
     }
 
     /// To set the `content-available` field on iOS
-    pub fn content_available(mut self, content_available: bool) ->Self {
+    pub fn content_available(mut self, content_available: bool) -> Self {
         self.content_available = Some(content_available);
         self
     }
@@ -143,13 +145,13 @@ impl Message {
     /// use gcm::Message;
     /// use std::collections::HashMap;
     ///
-    /// let mut map : HashMap<String,String>= HashMap::new();
-    /// map.insert("message".to_string(), "Howdy!".to_string());
+    /// let mut map = JsonMap::new();
+    /// map.insert("message".to_string(), JsonValue::String("Howdy!".to_string()));
     ///
     /// let message = Message::new(vec!["<registration id>".to_string()]).data(&map);
     /// ```
-    pub fn data(mut self, data: &HashMap<String,String>) -> Self {
-        let mut datamap: HashMap<String, String> = HashMap::new();
+    pub fn data(mut self, data: &JsonMap<String, JsonValue>) -> Self {
+        let mut datamap: JsonMap<String, JsonValue> = JsonMap::new();
         for (key, val) in data.iter() {
             datamap.insert(key.clone(), val.clone());
         }
@@ -158,7 +160,7 @@ impl Message {
         self
     }
 
-/*    /// Use this to set a `Notification` for the message.
+    /*    /// Use this to set a `Notification` for the message.
     /// # Examples:
     /// ```rust
     /// use gcm::{Message, NotificationBuilder};
