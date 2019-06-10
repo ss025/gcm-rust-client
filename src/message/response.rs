@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::error;
 use std::fmt::{self, Display};
 
@@ -12,6 +12,7 @@ pub struct GcmResponse {
     pub canonical_ids: Option<u64>,
     pub results: Option<Vec<MessageResult>>,
     pub ids_by_error: Option<HashMap<String, Vec<String>>>,
+    pub ids_by_success : HashSet<String>,
 }
 
 impl GcmResponse {
@@ -25,6 +26,7 @@ impl GcmResponse {
             canonical_ids: None,
             results: None,
             ids_by_error: None,
+            ids_by_success: HashSet::new()
         }
     }
 
@@ -37,10 +39,13 @@ impl GcmResponse {
         let mut ids_by_error: HashMap<String, Vec<String>> = HashMap::new();
 
         for (i, v) in message_results.iter().enumerate() {
+            let id = ids.get(i).unwrap();
             match v.error {
-                None => {}
+                None => {
+                    self.ids_by_success.insert(id.clone());
+                },
                 Some(ref err_name) => {
-                    let id = ids.get(i).unwrap();
+
                     ids_by_error
                         .entry(err_name.to_string())
                         .and_modify(|v| v.push(id.to_string()))
