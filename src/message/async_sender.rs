@@ -6,6 +6,7 @@ use futures::Future;
 use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use http::HeaderMap;
 use reqwest::async::{Client, ClientBuilder, Response};
+use log::{debug};
 
 use gcm_util;
 use message::response::{GcmError, GcmResponse};
@@ -56,6 +57,7 @@ impl AsyncGsmSender {
         match result {
             Err(e) => Box::new(err(e)),
             Ok(body) => {
+                debug!("Async Gcm Body request json {}",&body);
                 let and_then = self
                     .client
                     .post(&self.gcm_url)

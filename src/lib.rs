@@ -7,6 +7,7 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate log;
 
 pub use message::response::GcmError as Error;
 pub use message::*;
