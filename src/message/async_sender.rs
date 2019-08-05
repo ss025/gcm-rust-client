@@ -87,7 +87,10 @@ impl AsyncGsmSender {
             200 => {
                 let then = res
                     .json::<GcmResponse>()
-                    .map_err(|_| GcmError::InvalidJsonBody)
+                    .map_err(|e| {
+                        error!("error {:?}",e);
+                        GcmError::InvalidJsonBody
+                    })
                     .and_then(move |mut gcm_resp| {
                         if should_build_error_map && gcm_resp.results.is_some() {
                             gcm_resp.build_reg_ids_by_error_map(ids);
