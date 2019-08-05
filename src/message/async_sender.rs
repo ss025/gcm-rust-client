@@ -68,7 +68,6 @@ impl AsyncGsmSender {
                         gcm_util::parse_error_status_code(err.status())
                     })
                     .and_then(move |res| {
-                        debug!("got response from gcm {:?}",res);
                         AsyncGsmSender::parse(res, reg_ids.unwrap(), should_build_error_map)
                     });
                 Box::new(and_then)

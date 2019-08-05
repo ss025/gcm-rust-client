@@ -12,8 +12,14 @@ pub struct GcmResponse {
     pub canonical_ids: Option<u64>,
     pub results: Option<Vec<MessageResult>>,
     pub ids_by_error: Option<HashMap<String, Vec<String>>>,
+    #[serde(default = "empty_set")]
     pub ids_by_success : HashSet<String>,
 }
+
+fn empty_set() -> HashSet<String>{
+    HashSet::default()
+}
+
 
 impl GcmResponse {
     pub fn default() -> GcmResponse {
