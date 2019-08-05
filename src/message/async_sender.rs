@@ -94,6 +94,7 @@ impl AsyncGsmSender {
                         if should_build_error_map && gcm_resp.results.is_some() {
                             gcm_resp.build_reg_ids_by_error_map(ids);
                         }
+                        gcm_resp.check_for_failure();
                         ok(gcm_resp)
                     });
 

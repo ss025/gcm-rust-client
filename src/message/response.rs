@@ -62,6 +62,11 @@ impl GcmResponse {
 
         self.ids_by_error = Some(ids_by_error);
     }
+    pub fn check_for_failure(&mut self) {
+        if let Some(0) = self.failure {
+           self.failure = None
+        }
+    }
 }
 
 #[derive(Deserialize, Debug, Serialize)]
