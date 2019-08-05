@@ -6,7 +6,7 @@ use futures::Future;
 use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use http::HeaderMap;
 use reqwest::async::{Client, ClientBuilder, Response};
-use log::{debug};
+use log::{debug, error};
 
 use gcm_util;
 use message::response::{GcmError, GcmResponse};
@@ -63,8 +63,12 @@ impl AsyncGsmSender {
                     .post(&self.gcm_url)
                     .body(body)
                     .send()
-                    .map_err(|err| gcm_util::parse_error_status_code(err.status()))
+                    .map_err(|err| {
+                        error!("error while sending gcm request {:?}",err);
+                        gcm_util::parse_error_status_code(err.status())
+                    })
                     .and_then(move |res| {
+                        debug!("got response from gcm {:?}",res);
                         AsyncGsmSender::parse(res, reg_ids.unwrap(), should_build_error_map)
                     });
                 Box::new(and_then)
